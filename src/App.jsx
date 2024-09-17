@@ -2,7 +2,9 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import DiscoveryFeed from './components/DiscoveryFeed'
+import DiscoveryFeed from './components/DiscoveryFeed';
+import ProductPage from './components/ProductPage'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,7 +31,12 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p> */}
-      <DiscoveryFeed />
+      <Router>
+        <Routes>
+          <Route path="/" element={<DiscoveryFeed />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+        </Routes>
+      </Router>
     </>
   )
 }

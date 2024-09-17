@@ -1,11 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardFooter } from './Card';
 import { FaChevronUp } from 'react-icons/fa';
 import { TfiComment } from 'react-icons/tfi';
 import { IoShareSocialOutline } from 'react-icons/io5';
 import { GrShare } from 'react-icons/gr';
+import { Link } from 'react-router-dom';
 
-const ProductPost = ({ brand, productName, image, description, upvotes, comments }) => {
+const DiscoveryFeed = () => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+  
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('http://localhost:3001/api/products', {
+          signal: abortController.signal,
+        });
+        const data = await res.json();
+        setProducts(data);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Error:', error);
+        }
+      }
+    };
+  
+    fetchProducts();
+  
+    return () => abortController.abort();
+  }, []);
+
+  return (
+    <div className="p-4 bg-gray-100 min-h-screen">
+      <header className="max-w-2xl mx-auto mb-6">
+        <h1 className="text-3xl font-bold text-center mb-2">Trendberry</h1>
+        <p className="text-center text-gray-600">Discover and upvote the best products from emerging brands</p>
+      </header>
+      {products.map((product, index) => (
+        <ProductPost key={index} {...product} />
+      ))}
+    </div>
+  );
+};
+
+const ProductPost = ({ id, brand, productName, image, description, upvotes, comments }) => {
   const [votes, setVotes] = useState(upvotes);
 
   return (
@@ -30,9 +69,17 @@ const ProductPost = ({ brand, productName, image, description, upvotes, comments
               </div>
               <span className="font-semibold text-sm text-gray-600">{brand}</span>
             </div>
-            <h2 className="text-xl font-bold mb-2 text-left">{productName}</h2>
-            <p className="text-gray-700 mb-4 text-left">{description}</p>
-            <img src={image} alt={productName} className="w-full rounded-md mb-4 h-[400px] object-cover" />
+            <Link to={`/product/${id}`}>
+              <h2 className="text-xl font-bold mb-1 text-left">{productName}</h2>
+            </Link>
+            <p className="text-gray-700 mb-2 text-left">{description}</p>
+            <Link to={`/product/${id}`}>
+              <img 
+                src={image} 
+                alt={productName} 
+                className="w-full rounded-md mb-4 h-[400px] object-cover cursor-pointer" 
+              />
+            </Link>
           </div>
         </div>
       </CardContent>
@@ -45,31 +92,11 @@ const ProductPost = ({ brand, productName, image, description, upvotes, comments
             <IoShareSocialOutline /> <span className="pl-2">Share</span>
           </button>
         </div>
-        <button className="text-blue-500 text-sm flex items-center text-sm">
+        <button className="text-blue-500 flex items-center text-sm">
           <GrShare /> <span className="pl-2">View Product</span>
         </button>
       </CardFooter>
     </Card>
-  );
-};
-
-const DiscoveryFeed = () => {
-  const [posts] = useState([
-    { brand: "EcoWear", productName: "Sustainable Denim Jacket", image: "https://kittykush.co/cdn/shop/files/JarinCatnip_1.webp?v=1718583312", description: "Ethically made denim jacket from recycled materials. Perfect for any casual outfit.", upvotes: 128, comments: 24 },
-    { brand: "TechGadgets", productName: "Smart Home Hub 2000", image: "https://m.media-amazon.com/images/I/819Nc-nureL._SX679_.jpg", description: "Control your entire home with voice commands. Compatible with all major smart home devices.", upvotes: 95, comments: 18 },
-    { brand: "GourmetDelights", productName: "Artisanal Coffee Sampler", image: "https://cdn.thisiswhyimbroke.com/thumb/spyratwo-water-gun_400x333.jpg", description: "Experience a world tour of coffee with our curated selection of single-origin beans.", upvotes: 76, comments: 12 },
-  ]);
-
-  return (
-    <div className="p-4 bg-gray-100 min-h-screen">
-      <header className="max-w-2xl mx-auto mb-6">
-        <h1 className="text-3xl font-bold text-center mb-2">Trendberry</h1>
-        <p className="text-center text-gray-600">Discover and upvote the best products from emerging brands</p>
-      </header>
-      {posts.map((post, index) => (
-        <ProductPost key={index} {...post} />
-      ))}
-    </div>
   );
 };
 
