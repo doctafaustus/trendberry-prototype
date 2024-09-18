@@ -1,6 +1,7 @@
 const express = require('express');
 const admin = require('firebase-admin');
 const cors = require('cors');
+const cheerio = require('cheerio');
 
 const app = express();
 const port = 3001;
@@ -26,6 +27,15 @@ if (!process.env.PORT) {
 }
 
 
+let fetch;
+async function initializeFetch() {
+  fetch = (await import('node-fetch')).default;
+}
+
+initializeFetch().catch(err => console.error(err));
+
+app.use(express.json());
+
 app.get('/api', (req, res) => {
   res.send('Hellow from Express!');
 });
@@ -39,6 +49,39 @@ app.get('/api/products/:id?', async (req, res) => {
   } catch (error) {
     console.error('Error getting documents: ', error);
     res.status(500).send('Error getting products');
+  }
+});
+
+app.post('/api/scrape', async (req, res) => {
+  const { productUrl } = req.body;
+
+  try {
+    const response = await fetch(productUrl);
+    const body = await response.text();
+    const $ = cheerio.load(body);
+    const brand = $('meta[property="og:site_name"]').attr('content');
+    const productName = $('meta[property="og:title"]').attr('content');
+    const description = $('meta[property="og:description"]').attr('content');
+    const image = $('meta[property="og:image"]').attr('content');
+
+    // Save these to your database
+    const product = {
+      brand,
+      productName,
+      description,
+      image,
+      upvotes: 1
+    };
+
+    console.log('---------', product);
+
+    // const collectionRef = db.collection('products');
+    // const docRef = await collectionRef.add(product);
+
+    res.json(product);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Error submitting product');
   }
 });
 

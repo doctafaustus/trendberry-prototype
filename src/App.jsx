@@ -3,8 +3,10 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import DiscoveryFeed from './components/DiscoveryFeed';
-import ProductPage from './components/ProductPage'
+import ProductPage from './components/ProductPage';
+import SubmitProduct from './components/ProductSubmissionForm';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -32,9 +34,16 @@ function App() {
         Click on the Vite and React logos to learn more
       </p> */}
       <Router>
+        <nav>
+          <ul className="flex space-x-4 mb-8">
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/submit">Submit Product</Link></li>
+          </ul>
+        </nav>
         <Routes>
           <Route path="/" element={<DiscoveryFeed />} />
           <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/submit" element={<SubmitProduct />} />
         </Routes>
       </Router>
     </>
