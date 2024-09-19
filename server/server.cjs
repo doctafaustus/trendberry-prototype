@@ -64,7 +64,6 @@ app.post('/api/scrape', async (req, res) => {
     const description = $('meta[property="og:description"]').attr('content');
     const image = $('meta[property="og:image"]').attr('content');
 
-    // Save these to your database
     const product = {
       brand,
       productName,
@@ -73,17 +72,32 @@ app.post('/api/scrape', async (req, res) => {
       upvotes: 1
     };
 
-    console.log('---------', product);
-
-    // const collectionRef = db.collection('products');
-    // const docRef = await collectionRef.add(product);
-
     res.json(product);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Error submitting product');
   }
 });
+
+
+app.post('/api/submit', async (req, res) => {
+  const { productData } = req.body;
+
+  console.log('---------', productData);
+
+  try {
+    const collectionRef = db.collection('products');
+    const docRef = await collectionRef.add(productData);
+    const doc = await docRef.get();
+    const docData = doc.data(); 
+
+    res.json({ id: doc.id, ...docData });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Error submitting product');
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Express server listening on port ${port}`);

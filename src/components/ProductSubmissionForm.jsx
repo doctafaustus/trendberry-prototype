@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from './Card';
 import loading from '/loading.gif'
 
@@ -10,7 +10,7 @@ const ProductSubmissionForm = () => {
     brand: '',
     productName: '',
     description: '',
-    imageUrl: ''
+    image: ''
   });
 
   const handleUrlSubmit = async (e) => {
@@ -41,13 +41,31 @@ const ProductSubmissionForm = () => {
     setProductData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = () => {
-    console.log('Submitting product data:', productData);
-    setStep(3);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    fetch('http://localhost:3001/api/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        productData,
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Submit success:', data);
+      setIsLoading(false);
+      setStep(3);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto text-left">
+    <Card className={`w-full ${step !== 1 ? 'max-w-full' : 'max-w-lg'} mx-auto text-left`}>
       <CardContent className="p-6 min-w-[462px]">
         <h2 className="text-2xl font-bold mb-4">Submit a Product</h2>
         {step === 1 && (
@@ -76,7 +94,7 @@ const ProductSubmissionForm = () => {
           </form>
         )}
         {step === 2 && (
-          <div className="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
+          <div className="bg-white rounded-lg p-6 mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Product Details</h2>
             
             <div className="mb-6">
@@ -119,14 +137,14 @@ const ProductSubmissionForm = () => {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
                 Image URL
               </label>
               <input
-                id="imageUrl"
+                id="image"
                 type="url"
                 value={productData.image}
-                onChange={(e) => handleDataUpdate('imageUrl', e.target.value)}
+                onChange={(e) => handleDataUpdate('image', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -137,7 +155,7 @@ const ProductSubmissionForm = () => {
                 <img 
                   src={productData.image} 
                   alt="Product" 
-                  className="w-full h-64 object-cover rounded-md" 
+                  className="rounded-md mb-4 w-[566px] h-[400px] object-cover" 
                 />
               </div>
             )}
