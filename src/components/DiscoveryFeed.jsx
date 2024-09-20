@@ -77,7 +77,7 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
               <img 
                 src={image} 
                 alt={productName} 
-                className="w-full rounded-md mb-4 h-[400px] object-cover cursor-pointer" 
+                className="w-full rounded-md mb-0 h-[400px] object-cover cursor-pointer" 
               />
             </Link>
           </div>

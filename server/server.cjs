@@ -52,6 +52,27 @@ app.get('/api/products/:id?', async (req, res) => {
   }
 });
 
+app.get('/api/products/:id/comments', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const collectionRef = db.collection('products').doc(id).collection('comments');
+    const snapshot = await collectionRef.orderBy('createdAt', 'desc').get();
+
+    const comments = [];
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => {
+        comments.push({ id: doc.id, ...doc.data() });
+      });
+    }
+
+    res.json(comments);
+  } catch (error) {
+    console.error('Error getting comments: ', error);
+    res.status(500).send('Error getting comments');
+  }
+});
+
 app.post('/api/scrape', async (req, res) => {
   const { productUrl } = req.body;
 
@@ -88,7 +109,12 @@ app.post('/api/submit', async (req, res) => {
 
   try {
     const collectionRef = db.collection('products');
-    const docRef = await collectionRef.add(productData);
+    const productDataWithTimestamp = {
+      ...productData,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+
+    const docRef = await collectionRef.add(productDataWithTimestamp);
     const doc = await docRef.get();
     const docData = doc.data(); 
 
@@ -99,6 +125,31 @@ app.post('/api/submit', async (req, res) => {
   }
 });
 
+
+app.post('/api/add-comment', async (req, res) => {
+  const { productId, text, user } = req.body;
+
+  console.log('---------', text, user);
+
+  try {
+    const collectionRef = db.collection('products').doc(productId).collection('comments');
+    const commentData = {
+      text,
+      user,
+      createdAt: new Date().toISOString()
+    };
+
+    const docRef = await collectionRef.add(commentData);
+
+    const doc = await docRef.get();
+    const docData = doc.data(); 
+
+    res.json({ id: doc.id, ...docData });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Error submitting comment');
+  }
+});
 
 app.listen(port, () => {
   console.log(`Express server listening on port ${port}`);
@@ -122,7 +173,7 @@ async function getProducts(id) {
     } else {
       // Get all products
       const products = [];
-      const snapshot = await collectionRef.get();
+      const snapshot = await collectionRef.orderBy('createdAt', 'desc').get();
 
       if (snapshot.empty) {
         console.log('No matching documents.');
@@ -140,3 +191,27 @@ async function getProducts(id) {
     throw error;
   }
 }
+
+
+// async function getAllCommentsFromUser(userId) {
+//   // Perform a collection group query on "comments" to get all comments across all products
+//   const commentsSnapshot = await db.collectionGroup('comments')
+//     .where('userId', '==', userId)
+//     .get();
+
+//   // Array to hold all comments from the user
+//   let userComments = [];
+
+//   commentsSnapshot.forEach((doc) => {
+//     // Get the product ID from the parent document
+//     const productId = doc.ref.parent.parent.id;
+
+//     // Add each comment to the array, including the product ID
+//     userComments.push({ ...doc.data(), productId });
+//   });
+
+//   console.log(`All comments from user ${userId}:`, userComments);
+// }
+
+// getAllCommentsFromUser('user123').catch(err => console.error(err));
+
