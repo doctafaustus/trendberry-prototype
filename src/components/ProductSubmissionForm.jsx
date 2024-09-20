@@ -7,6 +7,7 @@ const ProductSubmissionForm = () => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [productData, setProductData] = useState({
+    productUrl: '',
     brand: '',
     productName: '',
     description: '',
@@ -96,6 +97,19 @@ const ProductSubmissionForm = () => {
         {step === 2 && (
           <div className="bg-white rounded-lg p-6 mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Product Details</h2>
+
+            <div className="mb-6">
+              <label htmlFor="productUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                Product URL
+              </label>
+              <input
+                id="productUrl"
+                type="text"
+                value={productData.productUrl}
+                onChange={(e) => handleDataUpdate('productUrl', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
             
             <div className="mb-6">
               <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-2">

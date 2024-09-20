@@ -65,6 +65,7 @@ app.post('/api/scrape', async (req, res) => {
     const image = $('meta[property="og:image"]').attr('content');
 
     const product = {
+      productUrl,
       brand,
       productName,
       description,

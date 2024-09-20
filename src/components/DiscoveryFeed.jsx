@@ -44,7 +44,7 @@ const DiscoveryFeed = () => {
   );
 };
 
-const ProductPost = ({ id, brand, productName, image, description, upvotes, comments }) => {
+const ProductPost = ({ id, productUrl, brand, productName, image, description, upvotes, comments }) => {
   const [votes, setVotes] = useState(upvotes);
 
   return (
@@ -92,9 +92,11 @@ const ProductPost = ({ id, brand, productName, image, description, upvotes, comm
             <IoShareSocialOutline /> <span className="pl-2">Share</span>
           </button>
         </div>
-        <button className="text-blue-500 flex items-center text-sm">
-          <GrShare /> <span className="pl-2">View Product</span>
-        </button>
+        <a href={productUrl} target="_blank" rel="noopener noreferrer">
+          <button className="text-blue-500 flex items-center text-sm">
+            <GrShare /> <span className="pl-2">View Product</span>
+          </button>
+        </a>
       </CardFooter>
     </Card>
   );
