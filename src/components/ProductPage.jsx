@@ -4,6 +4,7 @@ import { Card, CardContent } from './Card';
 import { FaChevronUp } from 'react-icons/fa';
 import { TfiComment } from 'react-icons/tfi';
 import { IoShareSocialOutline } from 'react-icons/io5';
+import Share from './Share';
 
 const ProductPage = ({ match }) => {
   const { id } = useParams();
@@ -70,8 +71,11 @@ const ProductPage = ({ match }) => {
 
   if (!product) return <div>Loading...</div>;
 
+
   return (
     <div className="bg-gray-100 min-h-screen py-8">
+      <Share trendberryUrl={product.productUrl} productName={product.productName} />
+
       <div className="max-w-4xl mx-auto px-4">
         <Card className="mb-8 text-left">
           <CardContent className="p-6">
@@ -116,9 +120,9 @@ const ProductPage = ({ match }) => {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent>
             <h2 className="text-2xl font-bold mb-4">Comments</h2>
-            <form onSubmit={handleCommentSubmit} className="mb-6">
+            <form onSubmit={handleCommentSubmit} className="mb-8 text-left">
               <textarea 
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
