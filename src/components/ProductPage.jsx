@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent } from './Card';
 import { FaChevronUp } from 'react-icons/fa';
@@ -11,8 +11,10 @@ const ProductPage = ({ match }) => {
   const [product, setProduct] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  
 
+  const [showShare, setShowShare] = useState(false);
+  const shareRef = useRef();
+  
   useEffect(() => {
     fetch(`http://localhost:3001/api/products/${id}`)
       .then(response => response.json())
@@ -32,6 +34,19 @@ const ProductPage = ({ match }) => {
       })
       .catch(error => console.error('Error:', error));
   }, [id]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (shareRef.current && !shareRef.current.contains(event.target)) {
+        setShowShare(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
 
   const handleUpvote = () => {
@@ -74,11 +89,9 @@ const ProductPage = ({ match }) => {
 
   return (
     <div className="bg-gray-100 min-h-screen py-8">
-      <Share trendberryUrl={product.productUrl} productName={product.productName} />
-
       <div className="max-w-4xl mx-auto px-4">
         <Card className="mb-8 text-left">
-          <CardContent className="p-6">
+          <CardContent className="p-6 relative">
             <div className="flex items-start">
               <div className="flex flex-col items-center mr-6">
                 <button 
@@ -106,7 +119,12 @@ const ProductPage = ({ match }) => {
                     <button className="text-gray-600 flex items-center">
                       <TfiComment className="mr-2" /> {comments.length} Comments
                     </button>
-                    <button className="text-gray-600 flex items-center">
+                    {showShare && (
+                      <div ref={shareRef} className="absolute bg-white bottom-[77px] left-[229px] p-2 rounded-lg shadow-lg">
+                        <Share trendberryUrl={product.productUrl} productName={product.productName} />
+                      </div>
+                    )}
+                    <button className="text-gray-600 flex items-center share-btn" onClick={() => setShowShare(true)}>
                       <IoShareSocialOutline className="mr-2" /> Share
                     </button>
                   </div>
