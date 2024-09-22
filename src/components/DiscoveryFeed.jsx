@@ -76,9 +76,9 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
               <span className="font-semibold text-sm text-gray-600">{brand}</span>
             </div>
             <Link to={`/product/${id}`}>
-              <h2 className="text-xl font-bold mb-1 text-left">{productName}</h2>
+              <h2 className="text-xl font-bold mb-3 text-left">{productName}</h2>
             </Link>
-            <p className="text-gray-700 mb-2 text-left">{description}</p>
+            <p className="text-gray-700 mb-2 text-left hidden">{description}</p>
             <Link to={`/product/${id}`}>
               <img 
                 src={image} 
@@ -91,9 +91,11 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
       </CardContent>
       <CardFooter className="bg-gray-50 px-4 py-0 flex justify-between items-center relative">
         <div className="flex">
-          <button className="text-gray-500 flex items-center p-2 text-sm">
-            <TfiComment /> <span className="pl-2">{comments} Comments</span> 
-          </button>
+          <Link to={{ pathname: `/product/${id}` }} state={{ scrollToComments: true }}>
+            <button className="text-gray-500 flex items-center p-2 text-sm">
+              <TfiComment /> <span className="pl-2">{comments} Comments</span> 
+            </button>
+          </Link>
           {showShare && (
             <div ref={shareRef} className="absolute bg-white bottom-[41px] left-[65px] p-2 rounded-lg shadow-lg">
               <Share trendberryUrl={productUrl} productName={productName} />

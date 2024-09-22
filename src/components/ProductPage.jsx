@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent } from './Card';
 import { FaChevronUp } from 'react-icons/fa';
@@ -6,40 +6,75 @@ import { TfiComment } from 'react-icons/tfi';
 import { IoShareSocialOutline } from 'react-icons/io5';
 import Share from './Share';
 import useShareBoxHandler from '../hooks/useShareBoxHandler';
+import { useLocation } from 'react-router-dom';
+import utils from '../utils';
 
 const ProductPage = () => {
   const { id } = useParams();
+  const location = useLocation();
+
   const [product, setProduct] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
 
   const [showShare, setShowShare] = useState(false);
   const shareRef = useRef();
+  const commentsRef = useRef();
 
   useShareBoxHandler(shareRef, '.share-btn', showShare, setShowShare);
-  
+
   useEffect(() => {
-    fetch(`http://localhost:3001/api/products/${id}`)
+    const abortController = new AbortController();
+  
+    fetch(`http://localhost:3001/api/products/${id}`, { signal: abortController.signal })
       .then(response => response.json())
       .then(data => {
         console.log('data', data);
         setProduct(data);
+
+        if (location.state?.scrollToComments) {
+          utils.waitFor(() => commentsRef.current, () => {
+            setTimeout(() => {
+              commentsRef.current.scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+          });
+        }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {
+        if (error.name !== 'AbortError') {
+          console.error('Error:', error);
+        }
+      });
+  
+    return () => {
+      abortController.abort();
+    };
   }, [id]);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/products/${id}/comments`)
+    const abortController = new AbortController();
+  
+    fetch(`http://localhost:3001/api/products/${id}/comments`, { signal: abortController.signal })
       .then(response => response.json())
       .then(data => {
         console.log('comments', data);
-        setComments(data)
+        setComments(data);
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {
+        if (error.name !== 'AbortError') {
+          console.error('Error:', error);
+        }
+      });
+  
+    return () => {
+      abortController.abort();
+    };
   }, [id]);
 
 
-
+  const scrollToComments = () => {
+    commentsRef.current.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleUpvote = () => {
     setProduct(prev => ({ ...prev, upvotes: prev.upvotes + 1 }));
@@ -92,15 +127,15 @@ const ProductPage = () => {
                 >
                   <FaChevronUp size={24} />
                 </button>
-                <span className="font-bold text-lg">{product.upvotes}</span>
+                <span className="font-bold text-md">{product.upvotes}</span>
               </div>
               <div className="flex-grow">
                 <div className="flex items-center mb-2">
                   <img src="https://i.ibb.co/yfVh53Y/js-bits-bill-logo-for-an-e-commerce-product-discovery-app-calle-06a7e3a4-d359-4881-8d76-d9a5847663db.webp" alt={product.brand} className="h-10 w-10 mr-3" />
                   <span className="font-semibold text-lg text-gray-700">{product.brand}</span>
                 </div>
-                <h1 className="text-3xl font-bold mb-2">{product.productName}</h1>
-                <p className="text-gray-700 mb-2 text-lg">{product.description}</p>
+                <h1 className="text-2xl font-bold mb-2">{product.productName}</h1>
+                <p className="text-gray-700 mb-2 text-md">{product.description}</p>
                 <img 
                   src={product.image} 
                   alt={product.productName} 
@@ -108,7 +143,7 @@ const ProductPage = () => {
                 />
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-4">
-                    <button className="text-gray-600 flex items-center">
+                    <button className="text-gray-600 flex items-center" onClick={scrollToComments}>
                       <TfiComment className="mr-2" /> {comments.length} Comments
                     </button>
                     {showShare && (
@@ -131,7 +166,7 @@ const ProductPage = () => {
 
         <Card>
           <CardContent>
-            <h2 className="text-2xl font-bold mb-4">Comments</h2>
+            <h2 className="text-2xl font-bold mb-4" ref={commentsRef}>Comments</h2>
             <form onSubmit={handleCommentSubmit} className="mb-8 text-left">
               <textarea 
                 value={newComment}
