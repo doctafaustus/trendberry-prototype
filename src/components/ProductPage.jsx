@@ -5,8 +5,9 @@ import { FaChevronUp } from 'react-icons/fa';
 import { TfiComment } from 'react-icons/tfi';
 import { IoShareSocialOutline } from 'react-icons/io5';
 import Share from './Share';
+import useShareBoxHandler from '../hooks/useShareBoxHandler';
 
-const ProductPage = ({ match }) => {
+const ProductPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [comments, setComments] = useState([]);
@@ -14,6 +15,8 @@ const ProductPage = ({ match }) => {
 
   const [showShare, setShowShare] = useState(false);
   const shareRef = useRef();
+
+  useShareBoxHandler(shareRef, '.share-btn', showShare, setShowShare);
   
   useEffect(() => {
     fetch(`http://localhost:3001/api/products/${id}`)
@@ -35,18 +38,7 @@ const ProductPage = ({ match }) => {
       .catch(error => console.error('Error:', error));
   }, [id]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (shareRef.current && !shareRef.current.contains(event.target)) {
-        setShowShare(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
 
   const handleUpvote = () => {

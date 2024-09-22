@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardFooter } from './Card';
 import { FaChevronUp } from 'react-icons/fa';
 import { TfiComment } from 'react-icons/tfi';
 import { IoShareSocialOutline } from 'react-icons/io5';
 import { GrShare } from 'react-icons/gr';
 import { Link } from 'react-router-dom';
+import Share from './Share';
+import useShareBoxHandler from '../hooks/useShareBoxHandler';
 
 const DiscoveryFeed = () => {
   const [products, setProducts] = useState([]);
@@ -46,6 +48,10 @@ const DiscoveryFeed = () => {
 
 const ProductPost = ({ id, productUrl, brand, productName, image, description, upvotes, comments }) => {
   const [votes, setVotes] = useState(upvotes);
+  const [showShare, setShowShare] = useState(false);
+  const shareRef = useRef();
+
+  useShareBoxHandler(shareRef, '.share-btn', showShare, setShowShare);
 
   return (
     <Card className="mb-4 max-w-2xl mx-auto">
@@ -83,12 +89,17 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
           </div>
         </div>
       </CardContent>
-      <CardFooter className="bg-gray-50 px-4 py-0 flex justify-between items-center">
+      <CardFooter className="bg-gray-50 px-4 py-0 flex justify-between items-center relative">
         <div className="flex">
           <button className="text-gray-500 flex items-center p-2 text-sm">
             <TfiComment /> <span className="pl-2">{comments} Comments</span> 
           </button>
-          <button className="text-gray-500 flex items-center p-2 text-sm">
+          {showShare && (
+            <div ref={shareRef} className="absolute bg-white bottom-[41px] left-[65px] p-2 rounded-lg shadow-lg">
+              <Share trendberryUrl={productUrl} productName={productName} />
+            </div>
+          )}
+          <button className="text-gray-500 flex items-center p-2 text-sm" onClick={() => setShowShare(true)}>
             <IoShareSocialOutline /> <span className="pl-2">Share</span>
           </button>
         </div>
