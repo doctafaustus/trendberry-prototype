@@ -39,9 +39,11 @@ const DiscoveryFeed = () => {
         <h1 className="text-3xl font-bold text-center mb-2">Trendberry</h1>
         <p className="text-center text-gray-600">Discover and upvote the best products from emerging brands</p>
       </header>
-      {products.map((product, index) => (
-        <ProductPost key={index} {...product} />
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {products.map((product, index) => (
+          <ProductPost key={index} {...product} />
+        ))}
+      </div>
     </div>
   );
 };
@@ -57,9 +59,8 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
     <Card className="mb-4 max-w-2xl mx-auto">
       <CardContent className="p-4">
         <div className="flex items-start">
-          <div className="flex flex-col items-center mr-4">
+          <div className="flex flex-col items-center mr-4 hidden">
             <button 
-              variant="ghost" 
               size="icon" 
               onClick={() => setVotes(votes + 1)}
               className="text-gray-500 hover:text-blue-500 mb-1"
@@ -80,11 +81,13 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
             </Link>
             <p className="text-gray-700 mb-2 text-left hidden">{description}</p>
             <Link to={`/product/${id}`}>
-              <img 
-                src={image} 
-                alt={productName} 
-                className="w-full rounded-md mb-0 h-[400px] object-cover cursor-pointer" 
-              />
+              <div className="relative pb-[75%]">
+                <img 
+                  src={image} 
+                  alt={productName} 
+                  className="absolute w-full h-full object-cover rounded-md cursor-pointer" 
+                />
+              </div>
             </Link>
           </div>
         </div>
@@ -107,7 +110,7 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
         </div>
         <a href={productUrl} target="_blank" rel="noopener noreferrer">
           <button className="text-blue-500 flex items-center text-sm">
-            <GrShare /> <span className="pl-2">View Product</span>
+            <GrShare /> <span className="pl-2 hidden">View Product</span>
           </button>
         </a>
       </CardFooter>
