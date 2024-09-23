@@ -39,7 +39,7 @@ const DiscoveryFeed = () => {
         <h1 className="text-3xl font-bold text-center mb-2">Trendberry</h1>
         <p className="text-center text-gray-600">Discover and upvote the best products from emerging brands</p>
       </header>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
         {products.map((product, index) => (
           <ProductPost key={index} {...product} />
         ))}
