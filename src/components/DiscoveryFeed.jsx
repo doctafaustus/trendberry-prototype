@@ -22,10 +22,6 @@ const DiscoveryFeed = () => {
         });
         const data = await res.json();
         setProducts(data);
-
-        setTimeout(() => {
-          utils.optimizeGridUI();
-        }, 500);
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error('Error:', error);
