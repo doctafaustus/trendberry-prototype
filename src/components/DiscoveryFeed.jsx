@@ -7,6 +7,7 @@ import { GrShare } from 'react-icons/gr';
 import { Link } from 'react-router-dom';
 import Share from './Share';
 import useShareBoxHandler from '../hooks/useShareBoxHandler';
+import utils from '../utils';
 
 const DiscoveryFeed = () => {
   const [products, setProducts] = useState([]);
@@ -21,6 +22,10 @@ const DiscoveryFeed = () => {
         });
         const data = await res.json();
         setProducts(data);
+
+        setTimeout(() => {
+          utils.optimizeGridUI();
+        }, 500);
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error('Error:', error);
@@ -41,7 +46,7 @@ const DiscoveryFeed = () => {
       </header>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {products.map((product, index) => (
-          <div className="w-full" key={index}>
+          <div className="w-full product-card-container" key={index}>
             <ProductPost key={index} {...product} />
           </div>
         ))}
@@ -58,7 +63,7 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
   useShareBoxHandler(shareRef, '.share-btn', showShare, setShowShare);
 
   return (
-<Card className="flex flex-col h-full mb-2 max-w-2xl mx-auto">
+    <Card className="flex flex-col h-full mb-2 max-w-2xl mx-auto">
       <CardContent className="p-4 flex-grow flex flex-col">
         <div className="flex-grow">
           <div className="flex items-center mb-2">
@@ -68,10 +73,10 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
             <span className="font-semibold text-sm text-gray-600">{brand}</span>
           </div>
           <Link to={`/product/${id}`}>
-            <h2 className="text-xl font-bold mb-3 text-left break-words overflow-hidden">{productName}</h2>
+            <h2 className="text-xl font-bold mb-3 text-left break-words overflow-hidden product-title">{productName}</h2>
           </Link>
-          <div className="relative flex-grow flex items-center"> {/* Use flex to align items */}
-            <Link to={`/product/${id}`} className="flex-grow"> {/* Allow the image to grow */}
+          <div className="relative flex-grow flex items-center product-image-container">
+            <Link to={`/product/${id}`} className="flex-grow">
               <img 
                 src={image} 
                 alt={productName} 
