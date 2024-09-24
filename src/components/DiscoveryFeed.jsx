@@ -41,7 +41,7 @@ const DiscoveryFeed = () => {
     </header>
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
       {products.map((product, index) => (
-        <div className="w-full">
+        <div className="w-full" key={index}>
           <ProductPost key={index} {...product} />
         </div>
       ))}
@@ -58,8 +58,8 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
   useShareBoxHandler(shareRef, '.share-btn', showShare, setShowShare);
 
   return (
-    <Card className="mb-2 max-w-2xl mx-auto">
-      <CardContent className="p-4">
+    <Card className="flex flex-col h-full mb-2 max-w-2xl mx-auto">
+      <CardContent className="p-4 flex-grow">
         <div className="flex items-start">
           <div className="flex flex-col items-center mr-4 hidden">
             <button 
