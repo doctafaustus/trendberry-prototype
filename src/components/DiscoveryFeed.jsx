@@ -35,16 +35,18 @@ const DiscoveryFeed = () => {
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen">
-      <header className="max-w-2xl mx-auto mb-6">
-        <h1 className="text-3xl font-bold text-center mb-2">Trendberry</h1>
-        <p className="text-center text-gray-600">Discover and upvote the best products from emerging brands</p>
-      </header>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
-        {products.map((product, index) => (
+    <header className="max-w-2xl mx-auto mb-6">
+      <h1 className="text-3xl font-bold text-center mb-2">Trendberry</h1>
+      <p className="text-center text-gray-600">Discover and upvote the best products from emerging brands</p>
+    </header>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      {products.map((product, index) => (
+        <div className="w-full">
           <ProductPost key={index} {...product} />
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
+  </div>
   );
 };
 
@@ -56,7 +58,7 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
   useShareBoxHandler(shareRef, '.share-btn', showShare, setShowShare);
 
   return (
-    <Card className="mb-4 max-w-2xl mx-auto">
+    <Card className="mb-2 max-w-2xl mx-auto">
       <CardContent className="p-4">
         <div className="flex items-start">
           <div className="flex flex-col items-center mr-4 hidden">
@@ -77,7 +79,7 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
               <span className="font-semibold text-sm text-gray-600">{brand}</span>
             </div>
             <Link to={`/product/${id}`}>
-              <h2 className="text-xl font-bold mb-3 text-left">{productName}</h2>
+            <h2 className="text-xl font-bold mb-3 text-left break-words overflow-hidden">{productName}</h2>
             </Link>
             <p className="text-gray-700 mb-2 text-left hidden">{description}</p>
             <Link to={`/product/${id}`}>
