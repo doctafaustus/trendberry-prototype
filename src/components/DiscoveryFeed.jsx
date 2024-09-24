@@ -35,18 +35,18 @@ const DiscoveryFeed = () => {
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen">
-    <header className="max-w-2xl mx-auto mb-6">
-      <h1 className="text-3xl font-bold text-center mb-2">Trendberry</h1>
-      <p className="text-center text-gray-600">Discover and upvote the best products from emerging brands</p>
-    </header>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-      {products.map((product, index) => (
-        <div className="w-full" key={index}>
-          <ProductPost key={index} {...product} />
-        </div>
-      ))}
+      <header className="max-w-2xl mx-auto mb-6">
+        <h1 className="text-3xl font-bold text-center mb-2">Trendberry</h1>
+        <p className="text-center text-gray-600">Discover and upvote the best products from emerging brands</p>
+      </header>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {products.map((product, index) => (
+          <div className="w-full" key={index}>
+            <ProductPost key={index} {...product} />
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
   );
 };
 
@@ -58,38 +58,25 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
   useShareBoxHandler(shareRef, '.share-btn', showShare, setShowShare);
 
   return (
-    <Card className="flex flex-col h-full mb-2 max-w-2xl mx-auto">
-      <CardContent className="p-4 flex-grow">
-        <div className="flex items-start">
-          <div className="flex flex-col items-center mr-4 hidden">
-            <button 
-              size="icon" 
-              onClick={() => setVotes(votes + 1)}
-              className="text-gray-500 hover:text-blue-500 mb-1"
-            >
-              <FaChevronUp />
-            </button>
-            <span className="font-bold"> {votes}</span>
-          </div>
-          <div className="flex-grow">
-            <div className="flex items-center mb-2">
-              <div className="h-8 w-8 mr-2">
-                <img src="https://i.ibb.co/yfVh53Y/js-bits-bill-logo-for-an-e-commerce-product-discovery-app-calle-06a7e3a4-d359-4881-8d76-d9a5847663db.webp" alt={brand} />
-              </div>
-              <span className="font-semibold text-sm text-gray-600">{brand}</span>
+<Card className="flex flex-col h-full mb-2 max-w-2xl mx-auto">
+      <CardContent className="p-4 flex-grow flex flex-col">
+        <div className="flex-grow">
+          <div className="flex items-center mb-2">
+            <div className="h-8 w-8 mr-2">
+              <img src="https://i.ibb.co/yfVh53Y/js-bits-bill-logo-for-an-e-commerce-product-discovery-app-calle-06a7e3a4-d359-4881-8d76-d9a5847663db.webp" alt={brand} />
             </div>
-            <Link to={`/product/${id}`}>
+            <span className="font-semibold text-sm text-gray-600">{brand}</span>
+          </div>
+          <Link to={`/product/${id}`}>
             <h2 className="text-xl font-bold mb-3 text-left break-words overflow-hidden">{productName}</h2>
-            </Link>
-            <p className="text-gray-700 mb-2 text-left hidden">{description}</p>
-            <Link to={`/product/${id}`}>
-              <div className="relative pb-[75%]">
-                <img 
-                  src={image} 
-                  alt={productName} 
-                  className="absolute w-full h-full object-cover rounded-md cursor-pointer" 
-                />
-              </div>
+          </Link>
+          <div className="relative flex-grow flex items-center"> {/* Use flex to align items */}
+            <Link to={`/product/${id}`} className="flex-grow"> {/* Allow the image to grow */}
+              <img 
+                src={image} 
+                alt={productName} 
+                className="w-full h-auto max-h-[200px] object-cover rounded-md cursor-pointer" 
+              />
             </Link>
           </div>
         </div>
