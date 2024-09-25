@@ -14,8 +14,6 @@ const utils = {
   },
 
   optimizeProductTitleSizes() {
-      // If 28 add margin-bottom
-
     const productTitles = [...document.querySelectorAll('.product-title')];
     productTitles.forEach(title => {
       title.classList.remove('over-2-lines', 'is-2-lines');
@@ -28,7 +26,6 @@ const utils = {
       }
 
       if (over2Lines) {
-        console.log('over2Lines', title.clientHeight, title);
         title.classList.add('over-2-lines');
       }
     });

@@ -17,6 +17,7 @@ import utils from '../utils';
 
 const DiscoveryFeed = () => {
   const [products, setProducts] = useState([]);
+  const feedRef = useRef(null);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -28,10 +29,6 @@ const DiscoveryFeed = () => {
         });
         const data = await res.json();
         setProducts(data);
-
-        setTimeout(() => {
-          utils.optimizeProductTitleSizes();
-        }, 500);
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error('Error:', error);
@@ -44,8 +41,23 @@ const DiscoveryFeed = () => {
     return () => abortController.abort();
   }, []);
 
+  useEffect(() => {
+    const feed = feedRef.current;
+    if (feed) {
+      const resizeObserver = new ResizeObserver(() => {
+        console.log('optimizeProductTitleSizes called')
+        utils.optimizeProductTitleSizes();
+      });
+      resizeObserver.observe(feed);
+
+      return () => {
+        resizeObserver.unobserve(feed);
+      };
+    }
+  }, []);
+
   return (
-    <div className="p-4 bg-gray-100 min-h-screen">
+    <div className="p-4 bg-gray-100 min-h-screen" ref={feedRef}>
       <header className="max-w-2xl mx-auto mb-6">
         <h1 className="text-3xl font-bold text-center mb-2">Trendberry</h1>
         <p className="text-center text-gray-600">Discover and upvote the best products from emerging brands</p>
