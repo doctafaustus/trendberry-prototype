@@ -57,6 +57,20 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+
+.is-2-lines {
+  margin-bottom: 16px !important;
+}
+.over-2-lines {
+  font-size: 18px !important;
+  line-height: 28px !important;
+  margin-bottom: 16px !important;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

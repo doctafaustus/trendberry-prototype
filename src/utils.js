@@ -12,6 +12,28 @@ const utils = {
       return setTimeout(this.waitFor.bind(null, conditionFn, callback, interval, expiration), interval);
     }
   },
+
+  optimizeProductTitleSizes() {
+      // If 28 add margin-bottom
+
+    const productTitles = [...document.querySelectorAll('.product-title')];
+    productTitles.forEach(title => {
+      title.classList.remove('over-2-lines', 'is-2-lines');
+
+      const over2Lines = title.clientHeight > 56;
+      const is2Lines = title.clientHeight === 56;
+
+      if (is2Lines) {
+        title.classList.add('is-2-lines');
+      }
+
+      if (over2Lines) {
+        console.log('over2Lines', title.clientHeight, title);
+        title.classList.add('over-2-lines');
+      }
+    });
+
+  }
 };
 
 export default utils;

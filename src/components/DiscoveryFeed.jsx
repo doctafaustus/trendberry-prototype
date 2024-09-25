@@ -9,6 +9,12 @@ import Share from './Share';
 import useShareBoxHandler from '../hooks/useShareBoxHandler';
 import utils from '../utils';
 
+/*
+  After products are fetched, we'll check over each height of the title and
+  determine how many lines there are. From there, we'll adjust the font size
+  and line height to ensure the titles are a uniform height.
+*/
+
 const DiscoveryFeed = () => {
   const [products, setProducts] = useState([]);
 
@@ -22,6 +28,10 @@ const DiscoveryFeed = () => {
         });
         const data = await res.json();
         setProducts(data);
+
+        setTimeout(() => {
+          utils.optimizeProductTitleSizes();
+        }, 500);
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error('Error:', error);
@@ -69,7 +79,10 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
             <span className="font-semibold text-sm text-gray-600">{brand}</span>
           </div>
           <Link to={`/product/${id}`}>
-            <h2 className="text-xl font-bold mb-3 text-left break-words overflow-hidden product-title">{productName}</h2>
+            <h2 
+              className="text-xl font-bold text-left break-words overflow-hidden product-title"
+              style={{ marginBottom: '42px' }}
+            >{productName}</h2>
           </Link>
           <div className="relative flex-grow flex items-center product-image-container">
             <Link to={`/product/${id}`} className="flex-grow">
