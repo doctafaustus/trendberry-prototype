@@ -111,7 +111,8 @@ app.post('/api/submit', async (req, res) => {
     const collectionRef = db.collection('products');
     const productDataWithTimestamp = {
       ...productData,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      commentCount: 0
     };
 
     const docRef = await collectionRef.add(productDataWithTimestamp);
@@ -132,19 +133,26 @@ app.post('/api/add-comment', async (req, res) => {
   console.log('---------', text, user);
 
   try {
-    const collectionRef = db.collection('products').doc(productId).collection('comments');
+    const productRef = db.collection('products').doc(productId);
+    const collectionRef = productRef.collection('comments');
     const commentData = {
       text,
       user,
       createdAt: new Date().toISOString()
     };
 
-    const docRef = await collectionRef.add(commentData);
+    // Start a Firestore transaction
+    await db.runTransaction(async (t) => {
+      // Add the new comment
+      const docRef = await collectionRef.add(commentData);
+      const doc = await t.get(docRef);
+      const docData = doc.data(); 
 
-    const doc = await docRef.get();
-    const docData = doc.data(); 
+      // Increment the commentCount field of the product
+      t.update(productRef, { commentCount: admin.firestore.FieldValue.increment(1) });
 
-    res.json({ id: doc.id, ...docData });
+      res.json({ id: doc.id, ...docData });
+    });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Error submitting comment');

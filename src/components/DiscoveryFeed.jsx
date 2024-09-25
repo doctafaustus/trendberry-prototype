@@ -73,7 +73,7 @@ const DiscoveryFeed = () => {
   );
 };
 
-const ProductPost = ({ id, productUrl, brand, productName, image, description, upvotes, comments }) => {
+const ProductPost = ({ id, productUrl, brand, productName, image, description, upvotes, commentCount }) => {
   const [votes, setVotes] = useState(upvotes);
   const [showShare, setShowShare] = useState(false);
   const shareRef = useRef();
@@ -84,11 +84,22 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
     <Card className="flex flex-col h-full mb-2 max-w-2xl mx-auto">
       <CardContent className="p-4 flex-grow flex flex-col">
         <div className="flex-grow">
-          <div className="flex items-center mb-2">
-            <div className="h-8 w-8 mr-2">
-              <img src="https://i.ibb.co/yfVh53Y/js-bits-bill-logo-for-an-e-commerce-product-discovery-app-calle-06a7e3a4-d359-4881-8d76-d9a5847663db.webp" alt={brand} />
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center">
+              <div className="h-8 w-8 mr-2">
+                <img src="https://i.ibb.co/yfVh53Y/js-bits-bill-logo-for-an-e-commerce-product-discovery-app-calle-06a7e3a4-d359-4881-8d76-d9a5847663db.webp" alt={brand} />
+              </div>
+              <span className="font-semibold text-sm text-gray-600">{brand}</span>
             </div>
-            <span className="font-semibold text-sm text-gray-600">{brand}</span>
+            <div>
+              <button 
+                onClick={() => setVotes(votes + 1)}
+                className="text-gray-500 hover:text-blue-500 px-1 py-1"
+              >
+                <FaChevronUp />
+              </button>
+              <span className="text-sm"> {votes}</span>
+            </div>
           </div>
           <Link to={`/product/${id}`}>
             <h2 
@@ -101,17 +112,17 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
               <img 
                 src={image} 
                 alt={productName} 
-                className="w-full h-auto max-h-[200px] object-cover rounded-md cursor-pointer" 
+                className="w-full h-auto max-h-[200px] min-h-[200px] object-cover rounded-md cursor-pointer" 
               />
             </Link>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="bg-gray-50 px-4 py-0 flex justify-between items-center relative">
+      <CardFooter className="bg-gray-50 py-0 flex justify-between items-center relative">
         <div className="flex">
           <Link to={{ pathname: `/product/${id}` }} state={{ scrollToComments: true }}>
             <button className="text-gray-500 flex items-center p-2 text-sm">
-              <TfiComment /> <span className="pl-2">{comments} Comments</span> 
+              <TfiComment /> <span className="pl-2">{commentCount > 0 && commentCount} Comments</span> 
             </button>
           </Link>
           {showShare && (
@@ -124,7 +135,10 @@ const ProductPost = ({ id, productUrl, brand, productName, image, description, u
           </button>
         </div>
         <a href={productUrl} target="_blank" rel="noopener noreferrer">
-          <button className="text-blue-500 flex items-center text-sm">
+          <button 
+            className="text-blue-500 flex items-center text-sm"
+            style={{ paddingLeft: '0px', paddingRight: '0px', }}
+          >
             <GrShare /> <span className="pl-2 hidden">View Product</span>
           </button>
         </a>

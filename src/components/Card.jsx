@@ -20,7 +20,7 @@ export const CardContent = ({ children, className, ...props }) => {
 export const CardFooter = ({ children, className, ...props }) => {
   return (
     <div 
-      className={`px-4 py-0 bg-gray-50 border-t border-gray-200 rounded-b-lg ${className}`} 
+      className={`px-2 py-0 bg-gray-50 border-t border-gray-200 rounded-b-lg ${className}`} 
       {...props}
     >
       {children}

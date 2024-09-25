@@ -144,7 +144,7 @@ const ProductPage = () => {
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-4">
                     <button className="text-gray-600 flex items-center" onClick={scrollToComments}>
-                      <TfiComment className="mr-2" /> {comments.length} Comments
+                      <TfiComment className="mr-2" /> {comments.length > 0 ? comments.length : null} Comments
                     </button>
                     {showShare && (
                       <div ref={shareRef} className="absolute bg-white bottom-[77px] left-[229px] p-2 rounded-lg shadow-lg">
